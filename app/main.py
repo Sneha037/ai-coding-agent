@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import json
 
 from openai import OpenAI
 
@@ -50,8 +51,9 @@ def main():
 
    
     print(chat.choices[0].message.content)
-    print("Tool calls:", chat.choices[0].message.tool_calls)
+   """ print("Tool calls:", chat.choices[0].message.tool_calls)
     print(chat.choices[0].message)
+   """
 
     for tc in chat.choices[0].message.tool_calls or []:
         args = json.loads(tc.function.arguments)
