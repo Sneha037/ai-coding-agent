@@ -51,9 +51,8 @@ def main():
 
    
     print(chat.choices[0].message.content)
-   """ print("Tool calls:", chat.choices[0].message.tool_calls)
-    print(chat.choices[0].message)
-   """
+   # print("Tool calls:", chat.choices[0].message.tool_calls)
+   #  print(chat.choices[0].message)
 
     for tc in chat.choices[0].message.tool_calls or []:
         args = json.loads(tc.function.arguments)
