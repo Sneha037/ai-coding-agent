@@ -49,10 +49,10 @@ def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
 
-   
-    print(chat.choices[0].message.content)
-   # print("Tool calls:", chat.choices[0].message.tool_calls)
-   #  print(chat.choices[0].message)
+    if chat.choices[0].message.content:
+         print(chat.choices[0].message.content)
+    # print("Tool calls:", chat.choices[0].message.tool_calls)
+    # print(chat.choices[0].message)
 
     for tc in chat.choices[0].message.tool_calls or []:
         args = json.loads(tc.function.arguments)
