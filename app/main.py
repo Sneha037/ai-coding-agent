@@ -19,46 +19,78 @@ def main():
 
     client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
 
-    chat = client.chat.completions.create(
-        model="anthropic/claude-haiku-4.5",
-        messages=[{"role": "user", "content": args.p}],
-        tools=[
-            {
-                "type": "function",
-                "function": {
-                    "name": "Read",
-                    "description": "Read and return the contents of a file",
-                    "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "file_path": {
-                        "type": "string",
-                        "description": "The path to the file to read"
+    messages = [ {"role": "user", "content": args.p}]
+    while True:
+            chat = client.chat.completions.create(
+                model="anthropic/claude-haiku-4.5",
+                messages=messages,
+                tools=[
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "Read",
+                            "description": "Read and return the contents of a file",
+                            "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "file_path": {
+                                "type": "string",
+                                "description": "The path to the file to read"
+                                }
+                            },
+                            "required": ["file_path"]
+                            }
                         }
-                    },
-                    "required": ["file_path"]
-                    }
-                }
-                }
-        ]
-    )
+                        }
+                ]
+            )
 
-    if not chat.choices or len(chat.choices) == 0:
-        raise RuntimeError("no choices in response")
+            if not chat.choices or len(chat.choices) == 0:
+                raise RuntimeError("no choices in response")
 
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
-    print("Logs from your program will appear here!", file=sys.stderr)
+            # You can use print statements as follows for debugging, they'll be visible when running tests.
+            # print("Logs from your program will appear here!", file=sys.stderr)
 
-    if chat.choices[0].message.content:
-         print(chat.choices[0].message.content)
-    # print("Tool calls:", chat.choices[0].message.tool_calls)
-    # print(chat.choices[0].message)
+            #if chat.choices[0].message.content:
+            #   print(chat.choices[0].message.content)
+            # print("Tool calls:", chat.choices[0].message.tool_calls)
+            # print(chat.choices[0].message)
 
-    for tc in chat.choices[0].message.tool_calls or []:
-        args = json.loads(tc.function.arguments)
-        if tc.function.name == "Read":
-           with open(args["file_path"]) as f:
-                print(f.read())
+            response = chat.choices[0].message
+            response_message = chat.choices[0].message
+
+            message_dict = {"role": response_message.role, "content": response_message.content}
+
+            if hasattr(response_message, "tool_calls") and response_message.tool_calls:
+                message_dict["tool_calls"] = []
+                for tc in response_message.tool_calls:
+                    message_dict["tool_calls"].append(
+                        {
+                            "id" : tc.id,
+                            "type" : tc.type,
+                            "function": {
+                                "name" : tc.function.name,
+                                "arguments": tc.function.arguments,
+                            }
+                        }
+                    )
+
+            messages.append(message_dict)
+
+            if chat.choices[0].message.tool_calls == None:
+                print(chat.choices[0].message.content)
+                break
+
+            for tc in chat.choices[0].message.tool_calls or []:
+                args = json.loads(tc.function.arguments)
+                if tc.function.name == "Read":
+                     with open(args["file_path"]) as f:
+                       result = f.read()
+                       messages.append({"role": "tool", 
+                                        "content": result,
+                                        "tool_call_id": tc.id, 
+                       })
+                       chat.choices[0].message
 
 
 if __name__ == "__main__":
