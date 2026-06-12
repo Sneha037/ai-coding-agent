@@ -100,6 +100,7 @@ def main():
 
             message_dict = {"role": response_message.role, "content": response_message.content}
 
+            """    
             if hasattr(response_message, "tool_calls") and response_message.tool_calls:
                 message_dict["tool_calls"] = []
                 for tc in response_message.tool_calls:
@@ -115,6 +116,9 @@ def main():
                     )
 
             messages.append(message_dict)
+            """
+
+            messages.append(response_message.model_dump())
 
             if chat.choices[0].message.tool_calls == None:
                 print(chat.choices[0].message.content)
@@ -135,6 +139,14 @@ def main():
                         f.write(args["content"])
                         messages.append({"role": "tool", 
                                         "content": "Write successful",
+                                        "tool_call_id": tc.id, 
+                       })
+                elif tc.function.name == "Bash":
+                    import subprocess
+                    result = subprocess.run(args["command"], shell=True, text=True, capture_output=True)
+                    output = result.stdout + "\n" + result.stderr
+                    messages.append({"role": "tool", 
+                                        "content": output,
                                         "tool_call_id": tc.id, 
                        })
 
