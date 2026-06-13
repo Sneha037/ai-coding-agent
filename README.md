@@ -1,34 +1,48 @@
-[![progress-banner](https://backend.codecrafters.io/progress/claude-code/efc2252d-b2ba-41a7-b0c0-1d9f957eafd5)](https://app.codecrafters.io/users/Sneha037?r=2qF)
 
-This is a starting point for Python solutions to the
-["Build Your own Claude Code" Challenge](https://codecrafters.io/challenges/claude-code).
+# AI Coding Agent
 
-Claude Code is an AI coding assistant that uses Large Language Models (LLMs) to
-understand code and perform actions through tool calls. In this challenge,
-you'll build your own Claude Code from scratch by implementing an LLM-powered
-coding assistant.
+An autonomous coding agent built from scratch in Python using LLM tool-calling capabilities. The agent can reason about tasks, interact with the local filesystem, execute shell commands, and iteratively solve problems through a multi-step agent loop.
 
-Along the way you'll learn about HTTP RESTful APIs, OpenAI-compatible tool
-calling, agent loop, and how to integrate multiple tools into an AI assistant.
+## Features
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+* Tool-calling architecture powered by modern LLMs
+* File operations (Read and Write tools)
+* Shell command execution through a Bash tool
+* Multi-turn agent loop for iterative reasoning
+* Conversation and tool execution history management
+* Extensible framework for adding new tools and capabilities
 
-# Passing the first stage
+## How It Works
 
-The entry point for your `claude-code` implementation is in `app/main.py`. Study
-and uncomment the relevant code, and submit to pass the first stage:
+The agent follows a simple but powerful execution loop:
 
-```sh
-codecrafters submit
-```
+1. Receive a user request.
+2. Send the request and available tools to the language model.
+3. Allow the model to choose and invoke tools when needed.
+4. Execute the requested tool locally.
+5. Return tool results to the model.
+6. Repeat until the model produces a final answer.
 
-# Stage 2 & beyond
+This architecture mirrors the core design used by modern AI coding assistants and autonomous agents.
 
-Note: This section is for stages 2 and beyond.
+## Example Tasks
 
-1. Ensure you have `uv` installed locally.
-2. Run `./your_program.sh` to run your program, which is implemented in
-   `app/main.py`.
-3. Run `codecrafters submit` to submit your solution to CodeCrafters. Test
-   output will be streamed to your terminal.
+* Read and summarize project files
+* Modify source code
+* Create new files
+* Execute shell commands
+* Inspect project structure
+* Perform multi-step development workflows
+
+## Tech Stack
+
+* Python
+* OpenAI-compatible SDK
+* LLM Tool Calling
+* Local File System APIs
+* Shell Command Execution
+
+## Learning Goals
+
+This project was built to understand the internals of modern AI agents, including tool calling, agent loops, context management, and autonomous task execution. The implementation focuses on clarity and extensibility while providing a foundation for more advanced capabilities such as code search, planning, memory, and project-wide reasoning.
+
